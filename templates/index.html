@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quantum Student Performance Analyzer | Qiskit Powered</title>
+  <meta name="description" content="A state-of-the-art quantum computing simulator for evaluating student success through 2-qubit angle encoding and entanglement with Qiskit.">
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <!-- Dynamic Ambient Particle Canvas -->
+  <canvas id="quantum-bg"></canvas>
+
+  <div class="app-wrapper">
+    <!-- Navigation Header -->
+    <header class="header-glass">
+      <div class="brand-section">
+        <div class="brand-logo-container">
+          <svg class="brand-logo-icon" viewBox="0 0 64 64" fill="none">
+            <ellipse cx="32" cy="32" rx="22" ry="8" stroke="#38bdf8" stroke-width="2" transform="rotate(-30 32 32)" opacity="0.8"/>
+            <ellipse cx="32" cy="32" rx="22" ry="8" stroke="#8b5cf6" stroke-width="2" transform="rotate(30 32 32)" opacity="0.8"/>
+            <ellipse cx="32" cy="32" rx="22" ry="8" stroke="#00f5d4" stroke-width="2" transform="rotate(90 32 32)" opacity="0.8"/>
+            <circle cx="32" cy="32" r="5" fill="#00f5d4"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>Quantum Performer</h1>
+          <span class="brand-subtitle">Qiskit 2-Qubit Entanglement Engine</span>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs" role="tablist">
+        <button class="nav-tab-btn active" data-tab="lab" role="tab" id="tab-btn-lab">
+          <span>⚡</span> Live Quantum Lab
+        </button>
+        <button class="nav-tab-btn" data-tab="roster" role="tab" id="tab-btn-roster">
+          <span>👥</span> Classroom Studio
+        </button>
+        <button class="nav-tab-btn" data-tab="analytics" role="tab" id="tab-btn-analytics">
+          <span>📊</span> Analytics
+        </button>
+        <button class="nav-tab-btn" data-tab="guide" role="tab" id="tab-btn-guide">
+          <span>📖</span> Quantum Theory
+        </button>
+      </nav>
+
+      <!-- Simulator Status Badge -->
+      <div class="header-status-badge">
+        <span class="status-dot"></span>
+        <span id="simulator-status-text">Qiskit AerSimulator: Active</span>
+      </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="main-container">
+      
+      <!-- ====================================================================
+           TAB 1: LIVE QUANTUM LAB
+           ==================================================================== -->
+      <section id="tab-lab" class="tab-pane active" role="tabpanel">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">
+              <span>⚡</span> Interactive Quantum Simulation Lab
+            </h2>
+            <p class="section-desc">
+              Adjust attendance and study hours in real-time. Student metrics are angle-encoded into qubit rotations $R_y(\theta)$ and entangled via CNOT gate.
+            </p>
+          </div>
+          <div class="badge-tag">Zero Latency Preview + Qiskit Backend</div>
+        </div>
+
+        <div class="lab-grid">
+          <!-- Left Column: Controls & Parameters -->
+          <div class="glass-card">
+            <div class="glass-card-header">
+              <div class="card-title-group">
+                <h3>Student Quantum Parameters</h3>
+              </div>
+              <span class="badge-tag">2 Qubits</span>
+            </div>
+
+            <!-- Student Name -->
+            <div class="form-group">
+              <label class="form-label" for="lab-student-name">Student Name</label>
+              <input type="text" id="lab-student-name" class="text-input" value="Alice Johnson" placeholder="Enter student name">
+            </div>
+
+            <!-- Attendance Slider -->
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label" for="lab-attendance">Class Attendance (0 - 100%)</label>
+                <span class="metric-val-pill" id="val-attendance">85%</span>
+              </div>
+              <div class="slider-container">
+                <input type="range" id="lab-attendance" class="quantum-range" min="0" max="100" step="1" value="85">
+              </div>
+              <div class="angle-encoding-hint">
+                <span>Angle: $\theta_0 = \frac{\text{att}}{100} \cdot \pi$</span>
+                <span class="angle-highlight" id="angle-theta0">θ_att = 2.67 rad (153°)</span>
+              </div>
+            </div>
+
+            <!-- Study Hours Slider -->
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label" for="lab-study">Weekly Study Hours (0 - 25 hrs)</label>
+                <span class="metric-val-pill" id="val-study">14 hrs</span>
+              </div>
+              <div class="slider-container">
+                <input type="range" id="lab-study" class="quantum-range" min="0" max="25" step="0.5" value="14">
+              </div>
+              <div class="angle-encoding-hint">
+                <span>Angle: $\theta_1 = \min(\frac{\text{study}}{20}, 1) \cdot \pi$</span>
+                <span class="angle-highlight" id="angle-theta1">θ_study = 2.20 rad (126°)</span>
+              </div>
+            </div>
+
+            <!-- Shots Configuration -->
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label" for="lab-shots">Simulator Measurement Shots</label>
+              </div>
+              <select id="lab-shots" class="text-input">
+                <option value="512">512 Shots</option>
+                <option value="1024" selected>1024 Shots (Default)</option>
+                <option value="4096">4096 Shots (High Precision)</option>
+                <option value="8192">8192 Shots (Ultra Precision)</option>
+              </select>
+            </div>
+
+            <!-- Action Button -->
+            <button id="btn-run-lab-analysis" class="btn-quantum">
+              <span>⚡</span> Run Full Qiskit Circuit
+            </button>
+
+            <!-- Preset Profiles -->
+            <div class="presets-group">
+              <div class="presets-label">Quick Student Archetypes</div>
+              <div class="preset-chips-list">
+                <button class="preset-chip" data-name="Alice Johnson" data-att="95" data-study="18">🌟 Top Achiever (95% / 18h)</button>
+                <button class="preset-chip" data-name="Bob Smith" data-att="80" data-study="11">📘 Steady Performer (80% / 11h)</button>
+                <button class="preset-chip" data-name="Diana Prince" data-att="45" data-study="4">⚠️ Borderline (45% / 4h)</button>
+                <button class="preset-chip" data-name="Evan Wright" data-att="20" data-study="1">🚨 High Risk (20% / 1h)</button>
+                <button class="preset-chip" data-name="George Miller" data-att="35" data-study="16">💡 Crammer (35% / 16h)</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Quantum Result & Visualizations -->
+          <div class="glass-card">
+            <div class="glass-card-header">
+              <div class="card-title-group">
+                <h3>Quantum State Evaluation</h3>
+              </div>
+              <span class="badge-tag">Collapse Outcome</span>
+            </div>
+
+            <!-- Radial Progress Outcome Banner -->
+            <div class="outcome-banner">
+              <div class="gauge-box">
+                <svg class="gauge-svg" viewBox="0 0 120 120">
+                  <circle class="gauge-track" cx="60" cy="60" r="50"></circle>
+                  <circle id="lab-gauge-progress" class="gauge-progress" cx="60" cy="60" r="50" style="stroke-dasharray: 314.159; stroke-dashoffset: 31.4; stroke: #10b981;"></circle>
+                </svg>
+                <div class="gauge-center-content">
+                  <div class="gauge-prob-num" id="lab-gauge-val">98.7</div>
+                  <div class="gauge-prob-unit">PASS %</div>
+                </div>
+              </div>
+
+              <div class="outcome-details">
+                <div id="lab-outcome-badge" class="outcome-status-badge pass">
+                  🎉 PASSING PREDICTION
+                </div>
+                <p id="lab-outcome-narrative" class="outcome-summary-text">
+                  Student demonstrates high probability of passing. Entanglement between attendance and study habits triggers constructive quantum excitation.
+                </p>
+              </div>
+            </div>
+
+            <!-- Comparison Metrics -->
+            <div class="comparison-grid">
+              <div class="comp-metric-card">
+                <div class="comp-header">
+                  <span>Quantum Pass Likelihood</span>
+                  <span>100% - P('00')</span>
+                </div>
+                <div class="comp-val" id="comp-val-quantum" style="color: var(--neon-cyan);">98.7%</div>
+              </div>
+              <div class="comp-metric-card">
+                <div class="comp-header">
+                  <span>Classical Linear Score</span>
+                  <span>0.5*Att + 0.5*Study</span>
+                </div>
+                <div class="comp-val" id="comp-val-classical" style="color: var(--laser-blue);">77.5%</div>
+              </div>
+            </div>
+
+            <!-- Quantum State Amplitudes Breakdown -->
+            <div style="margin-bottom: 1.5rem;">
+              <h4 style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                Measurement Basis States ($|q_1 q_0\rangle$)
+              </h4>
+              <div class="state-bars-container">
+                <!-- State 00: Fail -->
+                <div class="state-bar-row">
+                  <span class="state-ket-label">|00⟩</span>
+                  <div class="state-bar-track">
+                    <div id="bar-fill-00" class="state-bar-fill bar-00" style="width: 1.3%;"></div>
+                  </div>
+                  <span class="state-value-tag" id="bar-val-00">1.3%</span>
+                  <span class="state-desc-label">Ground State (Fail)</span>
+                </div>
+
+                <!-- State 01: Study passing -->
+                <div class="state-bar-row">
+                  <span class="state-ket-label">|01⟩</span>
+                  <div class="state-bar-track">
+                    <div id="bar-fill-01" class="state-bar-fill bar-01" style="width: 73.7%;"></div>
+                  </div>
+                  <span class="state-value-tag" id="bar-val-01">73.7%</span>
+                  <span class="state-desc-label">Study Proficiency</span>
+                </div>
+
+                <!-- State 10: Attendance passing -->
+                <div class="state-bar-row">
+                  <span class="state-ket-label">|10⟩</span>
+                  <div class="state-bar-track">
+                    <div id="bar-fill-10" class="state-bar-fill bar-10" style="width: 5.0%;"></div>
+                  </div>
+                  <span class="state-value-tag" id="bar-val-10">5.0%</span>
+                  <span class="state-desc-label">Attendance Proficiency</span>
+                </div>
+
+                <!-- State 11: Both passing -->
+                <div class="state-bar-row">
+                  <span class="state-ket-label">|11⟩</span>
+                  <div class="state-bar-track">
+                    <div id="bar-fill-11" class="state-bar-fill bar-11" style="width: 20.0%;"></div>
+                  </div>
+                  <span class="state-value-tag" id="bar-val-11">20.0%</span>
+                  <span class="state-desc-label">Dual Excitation</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dynamic Quantum Circuit Schematic -->
+            <div class="circuit-card">
+              <div class="glass-card-header" style="margin-bottom: 0.75rem; padding-bottom: 0.5rem;">
+                <div class="card-title-group">
+                  <h4 style="font-size: 0.95rem; font-weight: 600;">Quantum Circuit Structure</h4>
+                </div>
+                <div style="display: flex; gap: 4px;">
+                  <button id="btn-circuit-svg" class="btn-secondary active" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">SVG Schematic</button>
+                  <button id="btn-circuit-ascii" class="btn-secondary" style="padding: 0.25rem 0.6rem; font-size: 0.75rem;">Qiskit ASCII</button>
+                </div>
+              </div>
+
+              <!-- SVG View -->
+              <div id="circuit-svg-container" style="background: rgba(6, 9, 14, 0.7); border-radius: var(--radius-md); padding: 0.5rem; border: 1px solid var(--border-subtle);"></div>
+
+              <!-- ASCII View -->
+              <div id="circuit-ascii-container" class="circuit-display-wrapper" style="display: none;">
+                <pre id="circuit-ascii-code" class="circuit-ascii-code"></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ====================================================================
+           TAB 2: CLASSROOM ROSTER (BATCH STUDIO)
+           ==================================================================== -->
+      <section id="tab-roster" class="tab-pane" role="tabpanel">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">
+              <span>👥</span> Classroom Roster Studio
+            </h2>
+            <p class="section-desc">
+              Manage student cohorts, test batch predictions on the Qiskit simulator, edit records inline, and export results as CSV or Matplotlib charts.
+            </p>
+          </div>
+        </div>
+
+        <!-- Metric Cards -->
+        <div class="stats-grid-row">
+          <div class="stat-metric-card">
+            <div class="stat-label">Total Students</div>
+            <div class="stat-number" id="stat-total-students">8</div>
+            <div class="stat-subtext">Active cohort</div>
+          </div>
+          <div class="stat-metric-card">
+            <div class="stat-label">Cohort Pass Rate</div>
+            <div class="stat-number" id="stat-pass-rate" style="color: #34d399;">75.0%</div>
+            <div class="stat-subtext">&gt;= 50% threshold</div>
+          </div>
+          <div class="stat-metric-card">
+            <div class="stat-label">Average Attendance</div>
+            <div class="stat-number" id="stat-avg-att">65.3%</div>
+            <div class="stat-subtext">Class average</div>
+          </div>
+          <div class="stat-metric-card">
+            <div class="stat-label">Average Study Hours</div>
+            <div class="stat-number" id="stat-avg-study">10.1h</div>
+            <div class="stat-subtext">Per week / student</div>
+          </div>
+        </div>
+
+        <!-- Action Bar -->
+        <div class="roster-actions-bar">
+          <div class="action-btn-group">
+            <button id="btn-batch-evaluate" class="btn-quantum" style="width: auto;">
+              <span>⚡</span> Evaluate All with Qiskit
+            </button>
+            <button id="btn-open-add-modal" class="btn-secondary">
+              <span>➕</span> Add Student
+            </button>
+            <button id="btn-download-chart" class="btn-secondary">
+              <span>📊</span> Download Chart Report
+            </button>
+            <button id="btn-export-csv" class="btn-secondary">
+              <span>📥</span> Export CSV
+            </button>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: 0.65rem;">
+            <label for="select-cohort-preset" style="font-size: 0.82rem; color: var(--text-muted);">Cohort Preset:</label>
+            <select id="select-cohort-preset" class="text-input" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; width: auto;">
+              <option value="default_class">Default Class Cohort (8)</option>
+              <option value="borderline_cohort">Borderline Cohort (4)</option>
+              <option value="extreme_disparity">High Disparity Cohort (4)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Roster Table -->
+        <div class="table-responsive">
+          <table class="quantum-table">
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Attendance</th>
+                <th>Weekly Study</th>
+                <th>Quantum Pass Probability</th>
+                <th>Result</th>
+                <th style="text-align: right;">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="roster-tbody">
+              <!-- Dynamically rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+
+      <!-- ====================================================================
+           TAB 3: ANALYTICS DASHBOARD
+           ==================================================================== -->
+      <section id="tab-analytics" class="tab-pane" role="tabpanel">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">
+              <span>📊</span> Analytics & Performance Visualizer
+            </h2>
+            <p class="section-desc">
+              Visual evaluation across the entire student roster, comparing individual pass probabilities against the 50% threshold and analyzing the 2D attendance-study quadrant.
+            </p>
+          </div>
+        </div>
+
+        <div class="charts-grid">
+          <!-- Chart 1: Pass Probability Comparison Bar Chart -->
+          <div class="glass-card">
+            <div class="glass-card-header">
+              <div class="card-title-group">
+                <h3>Cohort Pass Probability Comparison</h3>
+              </div>
+              <span class="badge-tag">Threshold: 50%</span>
+            </div>
+            <div class="chart-card-body">
+              <canvas id="chart-pass-bars"></canvas>
+            </div>
+          </div>
+
+          <!-- Chart 2: Attendance vs Study Quadrant Matrix -->
+          <div class="glass-card">
+            <div class="glass-card-header">
+              <div class="card-title-group">
+                <h3>Quadrant Scatter Matrix</h3>
+              </div>
+              <span class="badge-tag">Att vs Study</span>
+            </div>
+            <div class="chart-card-body">
+              <canvas id="chart-quadrant-scatter"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ====================================================================
+           TAB 4: QUANTUM MECHANICS GUIDE
+           ==================================================================== -->
+      <section id="tab-guide" class="tab-pane" role="tabpanel">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">
+              <span>📖</span> How Quantum Performance Analysis Works
+            </h2>
+            <p class="section-desc">
+              Unlike classical linear models ($w_1 \cdot \text{att} + w_2 \cdot \text{study}$), quantum angle encoding and CNOT entanglement treat consistency and study time as interconnected states in a 4-dimensional Hilbert space.
+            </p>
+          </div>
+        </div>
+
+        <div class="explainer-grid">
+          <!-- Step 1 -->
+          <div class="glass-card step-card">
+            <span class="step-number-badge">Step 1</span>
+            <h4>Angle Encoding ($R_y$ Gate)</h4>
+            <p>
+              Each student metric is normalized into an angle $\theta \in [0, \pi]$ and encoded as a rotation about the Y-axis on the Bloch sphere:
+            </p>
+            <div class="math-formula-box">
+              $\theta_{\text{att}} = \frac{\text{attendance}}{100} \cdot \pi$<br>
+              $\theta_{\text{study}} = \min(\frac{\text{study}}{20}, 1) \cdot \pi$<br>
+              $R_y(\theta) = \begin{pmatrix} \cos(\theta/2) & -\sin(\theta/2) \\ \sin(\theta/2) & \cos(\theta/2) \end{pmatrix}$
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="glass-card step-card">
+            <span class="step-number-badge">Step 2</span>
+            <h4>Controlled-NOT Entanglement</h4>
+            <p>
+              A CNOT gate is applied between Qubit 0 (Attendance) and Qubit 1 (Study). In education, study hours and attendance are correlated: attendance primes independent study and study reinforces attendance.
+            </p>
+            <div class="math-formula-box">
+              $\text{CNOT} |q_0 q_1\rangle \to |q_0, q_0 \oplus q_1\rangle$<br>
+              Creates quantum entanglement between student metrics.
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="glass-card step-card">
+            <span class="step-number-badge">Step 3</span>
+            <h4>Superposition & Collapse</h4>
+            <p>
+              Measuring the circuit collapses the wave function into one of four computational basis states: $|00\rangle, |01\rangle, |10\rangle, |11\rangle$.
+            </p>
+            <div class="math-formula-box">
+              $P(\text{Pass}) = 1.0 - P('00') = 100\% - P('00')$<br>
+              State $|00\rangle$ = Ground state failure.<br>
+              Any state containing '1' = Student reached passing excitation.
+            </div>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="glass-card step-card">
+            <span class="step-number-badge">Step 4</span>
+            <h4>Why Quantum Entanglement?</h4>
+            <p>
+              Classical linear formulas assign independent weights. Quantum entanglement rewards synergy: high attendance boosts study retention, creating a non-linear probability landscape that mirrors real learning dynamics.
+            </p>
+            <div class="math-formula-box">
+              Passing Threshold: $\ge 50.0\%$ Pass Probability<br>
+              Failing Threshold: $< 50.0\%$ Pass Probability
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Modal: Add Student -->
+    <div id="modal-add-student" class="modal-overlay">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h3 class="modal-title">Add New Student</h3>
+          <button id="btn-close-modal" class="btn-close-modal">&times;</button>
+        </div>
+        <form id="form-add-student">
+          <div class="form-group">
+            <label class="form-label" for="new-student-name">Student Full Name</label>
+            <input type="text" id="new-student-name" class="text-input" placeholder="e.g. Maya Lin" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="new-student-att">Attendance Percentage (0 - 100%)</label>
+            <input type="number" id="new-student-att" class="text-input" min="0" max="100" value="75" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="new-student-study">Weekly Study Hours (0 - 40 hrs)</label>
+            <input type="number" id="new-student-study" class="text-input" min="0" max="40" step="0.5" value="10" required>
+          </div>
+          <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem;">
+            <button type="button" id="btn-cancel-add" class="btn-secondary">Cancel</button>
+            <button type="submit" class="btn-quantum" style="width: auto; padding: 0.7rem 1.5rem;">Add Student</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div>
+        <span>Quantum Student Performance Analyzer</span> • <span>Powered by Qiskit & Qiskit Aer</span>
+      </div>
+      <div class="footer-tech-stack">
+        <span class="tech-tag">⚡ Python 3.11</span>
+        <span class="tech-tag">⚛️ Qiskit 2.x</span>
+        <span class="tech-tag">🚀 Flask</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/static/js/quantum_engine.js"></script>
+  <script src="/static/js/circuit_renderer.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
